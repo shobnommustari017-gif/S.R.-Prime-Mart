@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProducts(products);
 });
 
-// প্রোডাক্ট ডিসপ্লে করার ফাংশন
+// প্রোডাক্ট রেন্ডার করা
 function renderProducts(items) {
     const container = document.getElementById('product-container');
     if (!container) return;
@@ -51,39 +51,56 @@ function renderProducts(items) {
                     <span class="stock-badge">In stock</span>
                 </div>
             </div>
-            <button class="add-cart-btn" onclick="addToCart('${product.name}', ${product.price})">
+            <button class="add-cart-btn" onclick="addToCart('${product.name.replace(/'/g, "\\'")}', ${product.price})">
                 <i class="fa-solid fa-cart-plus"></i> Add to cart
             </button>
         </div>
     `).join('');
 }
 
-// সার্চ ফাংশনালিটি
+// সার্চ ফাংশন
 function searchProducts() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const filtered = products.filter(p => p.name.toLowerCase().includes(query));
     renderProducts(filtered);
 }
 
-// কার্টে এড করা ও পপ-আপ ওপেন করা
+// কার্টে এড করা ও পপ-আপ মডাল ওপেন করা
 function addToCart(productName, price) {
     cartItemCount++;
-    document.getElementById('cartCount').innerText = cartItemCount;
-    document.getElementById('selectedProduct').value = `${productName} - ৳${price}`;
+    const cartBadge = document.getElementById('cartCount');
+    if (cartBadge) {
+        cartBadge.innerText = cartItemCount;
+    }
+    
+    const productInput = document.getElementById('selectedProduct');
+    if (productInput) {
+        productInput.value = `${productName} - ৳${price}`;
+    }
+
     openCart();
 }
 
 // পপ-আপ মডাল ওপেন ও ক্লোজ
 function openCart() {
-    document.getElementById('cartModal').style.display = 'flex';
+    const modal = document.getElementById('cartModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
 }
 
 function closeCart() {
-    document.getElementById('cartModal').style.display = 'none';
-    document.getElementById('successMessage').style.display = 'none';
+    const modal = document.getElementById('cartModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    const msg = document.getElementById('successMessage');
+    if (msg) {
+        msg.style.display = 'none';
+    }
 }
 
-// ফর্ম সাবমিট করা (গুগল শিটে ডাটা পাঠানো)
+// ফর্ম সাবমিট করা
 const orderForm = document.getElementById('orderForm');
 if (orderForm) {
     orderForm.addEventListener('submit', function (e) {
@@ -105,21 +122,17 @@ if (orderForm) {
             submitBtn.disabled = false;
             submitBtn.textContent = 'অর্ডার কনফার্ম করুন';
             orderForm.reset();
-            successMessage.style.display = 'block';
+            if (successMessage) {
+                successMessage.style.display = 'block';
+            }
             
             setTimeout(() => {
                 closeCart();
-            }, 4000); // ৪ সেকেন্ড পর পপআপ অটো বন্ধ হবে
+            }, 3000);
         }
     });
 }
-       
-
-
-    
-
-   
-
+          
     
 
     
