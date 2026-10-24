@@ -1,89 +1,89 @@
- 
+// আপনার Google Apps Script URL
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxYNeAUNdXYcUaAeNupvRyoiARb1PGC8au94ZYQzBysMkIop2txBsloRx9C62BDARIF/exec';
 
-// আপনার প্রোডাক্ট ডেটা
+// প্রোডাক্টের তথ্য
 const products = [
     {
         id: 1,
         name: "Men's Bar Neckpiece",
         price: 180,
-        image: "b2.jpg",
-        inStock: true
+        image: "b2.jpg"
     },
     {
         id: 2,
         name: "Men's Bar Bracelet",
         price: 200,
-        image: "b1.jpg",
-        inStock: true
+        image: "b1.jpg"
     },
     {
         id: 3,
         name: "Luxury Islamic Ayatul Kursi Cuff Bracelet",
         price: 200,
-        image: "b3.jpg",
-        inStock: true
+        image: "b3.jpg"
     }
 ];
 
-// পেজ লোড হলে কাজ করবে
+let cartItemCount = 0;
+
 document.addEventListener('DOMContentLoaded', () => {
-    renderProducts();
-    populateProductSelect();
+    renderProducts(products);
 });
 
-// প্রোডাক্ট গ্রিড রেন্ডার
-function renderProducts() {
+// প্রোডাক্ট ডিসপ্লে করার ফাংশন
+function renderProducts(items) {
     const container = document.getElementById('product-container');
     if (!container) return;
 
-    container.innerHTML = products.map(product => `
+    if (items.length === 0) {
+        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">কোনো প্রোডাক্ট পাওয়া যায়নি!</p>`;
+        return;
+    }
+
+    container.innerHTML = items.map(product => `
         <div class="product-card">
             <div>
                 <div class="image-box">
-                    <img src="${product.image}" alt="${product.name}" loading="lazy">
+                    <img src="${product.image}" alt="${product.name}">
                 </div>
-                <div class="product-info">
-                    <div class="product-title">${product.name}</div>
-                    <div class="price-stock-row">
-                        <span class="product-price">৳${product.price}</span>
-                        <span class="stock-status">In stock</span>
-                    </div>
+                <div class="product-title">${product.name}</div>
+                <div class="price-stock-row">
+                    <span class="product-price">৳${product.price}</span>
+                    <span class="stock-badge">In stock</span>
                 </div>
             </div>
-            <button class="add-to-cart-btn" onclick="selectAndScroll('${product.name}')">
-                🛒 Add to cart
+            <button class="add-cart-btn" onclick="addToCart('${product.name}', ${product.price})">
+                <i class="fa-solid fa-cart-plus"></i> Add to cart
             </button>
         </div>
     `).join('');
 }
 
-// ড্রপডাউন বক্সে প্রডাক্ট যুক্ত করা
-function populateProductSelect() {
-    const select = document.getElementById('productSelect');
-    if (!select) return;
-
-    products.forEach(product => {
-        const option = document.createElement('option');
-        option.value = `${product.name} - ৳${product.price}`;
-        option.textContent = `${product.name} - ৳${product.price}`;
-        select.appendChild(option);
-    });
+// সার্চ ফাংশনালিটি
+function searchProducts() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+    renderProducts(filtered);
 }
 
-// Add to cart চাপলে নিচে ফর্মে অপশন সিলেক্ট হবে
-function selectAndScroll(productName) {
-    const select = document.getElementById('productSelect');
-    for (let option of select.options) {
-        if (option.text.includes(productName)) {
-            select.value = option.value;
-            break;
-        }
-    }
-    document.querySelector('.checkout-section').scrollIntoView({ behavior: 'smooth' });
+// কার্টে এড করা ও পপ-আপ ওপেন করা
+function addToCart(productName, price) {
+    cartItemCount++;
+    document.getElementById('cartCount').innerText = cartItemCount;
+    document.getElementById('selectedProduct').value = `${productName} - ৳${price}`;
+    openCart();
 }
 
-// ফর্ম সাবমিট ও গুগল শিটে ডাটা পাঠানো + সাকসেস মেসেজ
+// পপ-আপ মডাল ওপেন ও ক্লোজ
+function openCart() {
+    document.getElementById('cartModal').style.display = 'flex';
+}
+
+function closeCart() {
+    document.getElementById('cartModal').style.display = 'none';
+    document.getElementById('successMessage').style.display = 'none';
+}
+
+// ফর্ম সাবমিট করা (গুগল শিটে ডাটা পাঠানো)
 const orderForm = document.getElementById('orderForm');
 if (orderForm) {
     orderForm.addEventListener('submit', function (e) {
@@ -97,23 +97,22 @@ if (orderForm) {
 
         const formData = new FormData(orderForm);
 
-        if (scriptURL && scriptURL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
-            fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => showSuccess())
-                .catch(error => showSuccess());
-        } else {
-            showSuccess();
-        }
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(response => showSuccess())
+            .catch(error => showSuccess());
 
         function showSuccess() {
             submitBtn.disabled = false;
             submitBtn.textContent = 'অর্ডার কনফার্ম করুন';
             orderForm.reset();
             successMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                closeCart();
+            }, 4000); // ৪ সেকেন্ড পর পপআপ অটো বন্ধ হবে
         }
     });
 }
-
        
 
 
