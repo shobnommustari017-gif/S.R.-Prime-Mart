@@ -10,9 +10,10 @@ let cart = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts(products);
+    setupForm();
 });
 
-// প্রডাক্ট গ্রিড রেন্ডার
+// ১. প্রোডাক্ট লিস্ট রেন্ডার
 function renderProducts(items) {
     const container = document.getElementById('product-container');
     if (!container) return;
@@ -30,13 +31,13 @@ function renderProducts(items) {
                 </div>
             </div>
             <button class="add-cart-btn" onclick="addToCart(${product.id})">
-                <i class="fa-solid fa-cart-plus"></i> Add to cart
+                🛒 Add to cart
             </button>
         </div>
     `).join('');
 }
 
-// কার্টে অ্যাড করা
+// ২. কার্টে অ্যাড করা
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
     const existingIndex = cart.findIndex(item => item.id === productId);
@@ -48,9 +49,10 @@ function addToCart(productId) {
     }
 
     updateCartUI();
+    toggleMiniCart(true); // কার্টে অ্যাড করলে পপ-আপ অটো ওপেন হবে
 }
 
-// কার্ট UI ও কাউন্ট আপডেট
+// ৩. কার্ট UI আপডেট
 function updateCartUI() {
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
@@ -74,14 +76,19 @@ function updateCartUI() {
     }
 }
 
-function toggleMiniCart() {
-    document.getElementById('miniCart').classList.toggle('active');
+function toggleMiniCart(forceOpen = false) {
+    const miniCart = document.getElementById('miniCart');
+    if (forceOpen) {
+        miniCart.classList.add('active');
+    } else {
+        miniCart.classList.toggle('active');
+    }
 }
 
-// চেকআউট পেজে যাওয়া
+// ৪. ভিউ কার্ট ও চেকআউট পেজে যাওয়া
 function goToCheckout() {
     if (cart.length === 0) {
-        alert('আপনার কার্ট খালি!');
+        alert('আপনার কার্ট খালি! অনুগ্রহ করে আগে প্রোডাক্ট যোগ করুন।');
         return;
     }
     document.getElementById('miniCart').classList.remove('active');
@@ -94,7 +101,7 @@ function showSection(sectionId) {
     document.getElementById('checkout-view').style.display = (sectionId === 'checkout-view') ? 'block' : 'none';
 }
 
-// চেকআউট সামারি রেন্ডার
+// ৫. চেকআউট সামারি তৈরি
 function renderCheckout() {
     const checkoutContainer = document.getElementById('checkoutOrderItems');
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -117,18 +124,14 @@ function renderCheckout() {
     updateDeliveryCharge();
 }
 
-// নতুন ডেলিভারি চার্জ হিসাবের ফাংশন
+// ৬. ডেলিভারি চার্জ হিসাব
 function updateDeliveryCharge() {
     const locationZone = document.getElementById('custDistrict').value;
     let delivery = 70;
 
-    if (locationZone === 'Inside Dhaka') {
-        delivery = 70;
-    } else if (locationZone === 'Dhaka Sub-Area') {
-        delivery = 110;
-    } else if (locationZone === 'Outside Dhaka') {
-        delivery = 130;
-    }
+    if (locationZone === 'Inside Dhaka') delivery = 70;
+    else if (locationZone === 'Dhaka Sub-Area') delivery = 110;
+    else if (locationZone === 'Outside Dhaka') delivery = 130;
 
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
@@ -136,36 +139,41 @@ function updateDeliveryCharge() {
     document.getElementById('summaryTotal').innerText = `৳${subtotal + delivery}`;
 }
 
-// অর্ডার সাবমিট (গুগল শিটে ডাটা পাঠানো)
-function handleOrderSubmit(e) {
-    e.preventDefault();
+// ৭. ফর্ম সাবমিট (গুগল শিটে তথ্য পাঠানো)
+function setupForm() {
+    const checkoutForm = document.getElementById('checkoutForm');
+    if (!checkoutForm) return;
 
-    const submitBtn = document.getElementById('placeOrderBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'প্রসেসিং হচ্ছে...';
+    checkoutForm.addEventListener('submit', function (e) {
+        e.preventDefault();
 
-    const orderDetailsList = cart.map(item => `${item.name} (${item.qty}x)`).join(', ');
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    const locationZone = document.getElementById('custDistrict').value;
-    
-    let delivery = 70;
-    if (locationZone === 'Inside Dhaka') delivery = 70;
-    else if (locationZone === 'Dhaka Sub-Area') delivery = 110;
-    else if (locationZone === 'Outside Dhaka') delivery = 130;
+        const submitBtn = document.getElementById('placeOrderBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'প্রসেসিং হচ্ছে...';
 
-    const total = subtotal + delivery;
+        const orderDetailsList = cart.map(item => `${item.name} (${item.qty}x)`).join(', ');
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        const locationZone = document.getElementById('custDistrict').value;
+        
+        let delivery = 70;
+        if (locationZone === 'Inside Dhaka') delivery = 70;
+        else if (locationZone === 'Dhaka Sub-Area') delivery = 110;
+        else if (locationZone === 'Outside Dhaka') delivery = 130;
 
-    const formData = new FormData();
-    formData.append('Product', orderDetailsList);
-    formData.append('Name', document.getElementById('custName').value);
-    formData.append('Phone', document.getElementById('custPhone').value);
-    formData.append('Address', `${document.getElementById('custAddress').value}, ${document.getElementById('custThana').value} (${locationZone})`);
-    formData.append('Notes', document.getElementById('custNotes').value);
-    formData.append('Total', `৳${total}`);
+        const total = subtotal + delivery;
 
-    fetch(scriptURL, { method: 'POST', body: formData })
-        .then(() => showOrderSuccess())
-        .catch(() => showOrderSuccess());
+        const formData = new FormData();
+        formData.append('Product', orderDetailsList);
+        formData.append('Name', document.getElementById('custName').value);
+        formData.append('Phone', document.getElementById('custPhone').value);
+        formData.append('Address', `${document.getElementById('custAddress').value}, ${document.getElementById('custThana').value} (${locationZone})`);
+        formData.append('Notes', document.getElementById('custNotes').value);
+        formData.append('Total', `৳${total}`);
+
+        fetch(scriptURL, { method: 'POST', body: formData })
+            .then(() => showOrderSuccess())
+            .catch(() => showOrderSuccess());
+    });
 }
 
 function showOrderSuccess() {
@@ -187,14 +195,3 @@ function searchProducts() {
     const filtered = products.filter(p => p.name.toLowerCase().includes(query));
     renderProducts(filtered);
 }
-          
-    
-
-    
-           
-        
-
-       
-
-
-
