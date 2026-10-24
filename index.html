@@ -11,7 +11,6 @@
     <!-- হেডার সেকশন -->
     <header class="main-header">
         <div class="header-container">
-            <!-- লোগো ও কন্টাক্ট -->
             <div class="top-row">
                 <div class="logo-area" onclick="showSection('shop-view')">
                     <img src="logo.jpg" alt="SR Prime Mart" class="logo-img" onerror="this.style.display='none'">
@@ -22,13 +21,33 @@
                         <small>LET'S TALK</small>
                         <span>01600445389</span>
                     </div>
-                    <div class="cart-icon-btn" onclick="goToCheckout()">
-                        🛒 <span id="cartCount" class="cart-badge">0</span>
+                    
+                    <!-- কার্ট আইকন ও ড্রপডাউন পপ-আপ -->
+                    <div class="cart-wrapper">
+                        <div class="cart-icon-btn" onclick="toggleMiniCart()">
+                            🛒 <span id="cartCount" class="cart-badge">0</span>
+                        </div>
+
+                        <div id="miniCart" class="mini-cart">
+                            <div class="mini-cart-header">
+                                <h4>Shopping Cart</h4>
+                                <span class="close-mini" onclick="toggleMiniCart()">&times;</span>
+                            </div>
+                            <div id="miniCartItems" class="mini-cart-items">
+                                <p class="empty-msg">আপনার কার্ট খালি আছে</p>
+                            </div>
+                            <div class="mini-cart-footer">
+                                <div class="total-row">
+                                    <span>Subtotal:</span>
+                                    <span id="miniCartSubtotal">৳0</span>
+                                </div>
+                                <button class="view-cart-btn" onclick="goToCheckout()">View Cart & Checkout</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- ফুল উইডথ সার্চ বার -->
             <div class="search-area">
                 <input type="text" id="searchInput" placeholder="Search products..." onkeyup="searchProducts()">
                 <button class="search-btn" onclick="searchProducts()">Search</button>
@@ -36,7 +55,7 @@
         </div>
     </header>
 
-    <!-- নেভিগেশন বার (শুধু Home এবং All Products) -->
+    <!-- নেভিগেশন বার (শুধু Home ও All Products) -->
     <nav class="nav-bar">
         <div class="nav-container">
             <a href="javascript:void(0)" class="nav-link active" onclick="showSection('shop-view')">Home</a>
@@ -44,7 +63,7 @@
         </div>
     </nav>
 
-    <!-- ১. প্রডাক্ট পেজ (Shop View) -->
+    <!-- ১. প্রডাক্ট পেজ -->
     <main id="shop-view" class="main-container">
         <section class="products-section">
             <h2 class="section-title">All Products</h2>
@@ -52,7 +71,7 @@
         </section>
     </main>
 
-    <!-- ২. চেকআউট পেজ (Checkout View) -->
+    <!-- ২. চেকআউট পেজ -->
     <main id="checkout-view" class="main-container" style="display: none;">
         
         <div id="topSuccessNotice" class="top-success-notice" style="display: none;">
@@ -66,7 +85,6 @@
 
         <form id="checkoutForm">
             <div class="checkout-grid">
-                <!-- বাম কলাম: নাম, ঠিকানা, ফোন নম্বর -->
                 <div class="checkout-left">
                     <div class="card-box">
                         <h3>Delivery details</h3>
@@ -109,7 +127,6 @@
                     </div>
                 </div>
 
-                <!-- ডান কলাম: প্রোডাক্টের তালিকা ও সামারি -->
                 <div class="checkout-right">
                     <div class="card-box">
                         <h3>Your order (<span id="checkoutItemCount">0</span>)</h3>
@@ -149,7 +166,7 @@
         </form>
     </main>
 
-    <!-- ৩. প্রোডাক্ট কুইক ভিউ মডাল -->
+    <!-- ৩. কুইক ভিউ মডাল -->
     <div id="quickViewModal" class="modal">
         <div class="modal-content quick-view-card">
             <span class="close-btn" onclick="closeQuickView()">&times;</span>
@@ -159,16 +176,10 @@
                     <h3 id="qvTitle"></h3>
                     <div class="qv-price" id="qvPrice"></div>
                     <p class="qv-stock">🟢 In stock</p>
-                    <button class="add-cart-btn" id="qvAddBtn">View Cart & Checkout</button>
+                    <button class="add-cart-btn" id="qvAddBtn">Add to cart</button>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- ফিক্সড বটম কার্ট বার (মোবাইলের জন্য) -->
-    <div id="fixedCartBar" class="fixed-cart-bar" onclick="goToCheckout()" style="display: none;">
-        <span>🛒 View Cart (<span id="bottomCartCount">0</span>)</span>
-        <span id="bottomCartTotal">৳0 →</span>
     </div>
 
     <script src="script.js"></script>
