@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupForm();
 });
 
-// প্রোডাক্ট রেন্ডার
+// ১. প্রোডাক্ট রেন্ডার
 function renderProducts(items) {
     const container = document.getElementById('product-container');
     if (!container) return;
@@ -37,7 +37,7 @@ function renderProducts(items) {
     `).join('');
 }
 
-// কার্টে অ্যাড করা
+// ২. কার্টে যোগ করা
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
     const existingIndex = cart.findIndex(item => item.id === productId);
@@ -49,10 +49,10 @@ function addToCart(productId) {
     }
 
     updateCartUI();
-    toggleMiniCart(true);
+    openCartModal(); // কার্টে প্রেস করার সাথে সাথেই পপ-আপ আসবে
 }
 
-// কোয়ান্টিটি পরিবর্তন (+ / -)
+// ৩. প্লাস মাইনাস কন্ট্রোল
 function changeQty(productId, delta) {
     const itemIndex = cart.findIndex(item => item.id === productId);
     if (itemIndex > -1) {
@@ -67,23 +67,23 @@ function changeQty(productId, delta) {
     }
 }
 
-// কার্ট UI আপডেট
+// ৪. কার্ট পপ-আপ আপডেট
 function updateCartUI() {
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
     document.getElementById('cartCount').innerText = totalQty;
-    document.getElementById('miniCartSubtotal').innerText = `৳${subtotal}`;
+    document.getElementById('modalSubtotal').innerText = `৳${subtotal}`;
 
-    const miniContainer = document.getElementById('miniCartItems');
+    const itemsContainer = document.getElementById('cartItemsContainer');
     if (cart.length === 0) {
-        miniContainer.innerHTML = `<p class="empty-msg">আপনার কার্ট খালি আছে</p>`;
+        itemsContainer.innerHTML = `<p style="text-align:center; color:#888; padding:15px 0;">আপনার কার্ট খালি আছে</p>`;
     } else {
-        miniContainer.innerHTML = cart.map(item => `
+        itemsContainer.innerHTML = cart.map(item => `
             <div class="cart-item-row">
-                <div class="cart-item-info">
+                <div>
                     <strong>${item.name}</strong>
-                    <div>৳${item.price}</div>
+                    <div style="color: #2e7d32; font-weight: bold;">৳${item.price}</div>
                 </div>
                 <div class="qty-controls">
                     <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
@@ -96,42 +96,22 @@ function updateCartUI() {
     }
 }
 
-function toggleMiniCart(forceOpen = false) {
-    const miniCart = document.getElementById('miniCart');
-    if (forceOpen) {
-        miniCart.classList.add('active');
-    } else {
-        miniCart.classList.toggle('active');
-    }
+// ৫. কার্ট মডাল পপ-আপ খোলা ও বন্ধ
+function openCartModal() {
+    document.getElementById('cartModal').style.display = 'flex';
 }
 
-// কুইক ভিউ
-function openQuickView(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
-
-    document.getElementById('qvImage').src = product.image;
-    document.getElementById('qvTitle').innerText = product.name;
-    document.getElementById('qvPrice').innerText = `৳${product.price}`;
-    document.getElementById('qvAddBtn').onclick = function() {
-        addToCart(product.id);
-        closeQuickView();
-    };
-
-    document.getElementById('quickViewModal').style.display = 'flex';
+function closeCartModal() {
+    document.getElementById('cartModal').style.display = 'none';
 }
 
-function closeQuickView() {
-    document.getElementById('quickViewModal').style.display = 'none';
-}
-
-// চেকআউট পেজে যাওয়া
+// ৬. চেকআউট পেজে যাওয়া
 function goToCheckout() {
     if (cart.length === 0) {
         alert('আপনার কার্ট খালি! অনুগ্রহ করে আগে প্রোডাক্ট যোগ করুন।');
         return;
     }
-    document.getElementById('miniCart').classList.remove('active');
+    closeCartModal();
     showSection('checkout-view');
     renderCheckout();
 }
@@ -142,6 +122,7 @@ function showSection(sectionId) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// ৭. চেকআউট সামারি
 function renderCheckout() {
     const checkoutContainer = document.getElementById('checkoutOrderItems');
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -178,7 +159,27 @@ function updateDeliveryCharge() {
     document.getElementById('summaryTotal').innerText = `৳${subtotal + delivery}`;
 }
 
-// অর্ডার সাবমিট
+// ৮. কুইক ইমেজ ভিউ
+function openQuickView(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    document.getElementById('qvImage').src = product.image;
+    document.getElementById('qvTitle').innerText = product.name;
+    document.getElementById('qvPrice').innerText = `৳${product.price}`;
+    document.getElementById('qvAddBtn').onclick = function() {
+        addToCart(product.id);
+        closeQuickView();
+    };
+
+    document.getElementById('quickViewModal').style.display = 'flex';
+}
+
+function closeQuickView() {
+    document.getElementById('quickViewModal').style.display = 'none';
+}
+
+// ৯. ফর্ম সাবমিট
 function setupForm() {
     const checkoutForm = document.getElementById('checkoutForm');
     if (!checkoutForm) return;
