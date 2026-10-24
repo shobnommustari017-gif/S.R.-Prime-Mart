@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SR Prime Mart</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
@@ -20,23 +18,19 @@
 
             <div class="search-area">
                 <input type="text" id="searchInput" placeholder="Search products..." onkeyup="searchProducts()">
-                <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                <button class="search-btn" onclick="searchProducts()">Search</button>
             </div>
 
             <div class="header-right">
                 <div class="contact-info">
-                    <i class="fa-solid fa-phone"></i>
-                    <div>
-                        <small>LET'S TALK</small>
-                        <span>01600445389</span>
-                    </div>
+                    <small>LET'S TALK</small>
+                    <span>01600445389</span>
                 </div>
                 
-                <!-- কার্ট আইকন ও মিনি কার্ট ড্রপডাউন -->
+                <!-- কার্ট আইকন ও কাউন্টার -->
                 <div class="cart-wrapper">
                     <div class="cart-icon-btn" onclick="toggleMiniCart()">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span id="cartCount" class="cart-badge">0</span>
+                        🛒 <span id="cartCount" class="cart-badge">0</span>
                     </div>
 
                     <!-- মিনি কার্ট পপ-আপ -->
@@ -64,12 +58,12 @@
     <!-- নেভিগেশন বার -->
     <nav class="nav-bar">
         <div class="nav-container">
-            <a href="#" class="nav-link active" onclick="showSection('shop-view')">Home</a>
-            <a href="#" class="nav-link" onclick="showSection('shop-view')">All Products</a>
+            <a href="javascript:void(0)" class="nav-link active" onclick="showSection('shop-view')">Home</a>
+            <a href="javascript:void(0)" class="nav-link" onclick="showSection('shop-view')">All Products</a>
         </div>
     </nav>
 
-    <!-- ১. শপ ভিউ (প্রোডাক্ট লিস্ট) -->
+    <!-- ১. প্রডাক্ট পেজ (Shop View) -->
     <main id="shop-view" class="main-container">
         <section class="products-section">
             <h2 class="section-title">All Products</h2>
@@ -77,19 +71,19 @@
         </section>
     </main>
 
-    <!-- ২. চেকআউট ভিউ -->
+    <!-- ২. চেকআউট পেজ (Checkout View) -->
     <main id="checkout-view" class="main-container" style="display: none;">
         <div class="checkout-header-bar">
-            <button class="back-btn" onclick="showSection('shop-view')"><i class="fa-solid fa-arrow-left"></i> Continue shopping</button>
+            <button class="back-btn" onclick="showSection('shop-view')">← Continue shopping</button>
             <h2>Checkout</h2>
         </div>
 
-        <form id="checkoutForm" onsubmit="handleOrderSubmit(event)">
+        <form id="checkoutForm">
             <div class="checkout-grid">
-                <!-- বাম কলাম: ডেলিভারি ডিটেইলস -->
+                <!-- বাম কলাম: নাম, ঠিকানা, ফোন নম্বর -->
                 <div class="checkout-left">
                     <div class="card-box">
-                        <h3><i class="fa-solid fa-location-dot"></i> Delivery details</h3>
+                        <h3>Delivery details</h3>
                         
                         <div class="form-row">
                             <div class="form-group">
@@ -129,10 +123,10 @@
                     </div>
                 </div>
 
-                <!-- ডান কলাম: ইয়োর অর্ডার লিস্ট ও পেমেন্ট -->
+                <!-- ডান কলাম: প্রোডাক্টের তালিকা ও সামারি -->
                 <div class="checkout-right">
                     <div class="card-box">
-                        <h3><i class="fa-solid fa-bag-shopping"></i> Your order (<span id="checkoutItemCount">0</span>)</h3>
+                        <h3>Your order (<span id="checkoutItemCount">0</span>)</h3>
                         
                         <div id="checkoutOrderItems" class="checkout-items-list"></div>
 
@@ -152,8 +146,8 @@
                         </div>
 
                         <div class="payment-section">
-                            <h4><i class="fa-solid fa-wallet"></i> Payment Method</h4>
-                            <div class="payment-option selected">
+                            <h4>Payment Method</h4>
+                            <div class="payment-option">
                                 <input type="radio" checked id="cod" name="Payment" value="Cash on Delivery">
                                 <label for="cod">
                                     <strong>Cash on delivery</strong><br>
@@ -168,10 +162,9 @@
             </div>
         </form>
 
-        <!-- সাকসেস মেসেজ মডাল -->
+        <!-- সাকসেস মেসেজ পপ-আপ -->
         <div id="orderSuccessModal" class="modal">
             <div class="modal-content success-card">
-                <i class="fa-solid fa-circle-check success-icon"></i>
                 <h3>ধন্যবাদ! আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে।</h3>
                 <p>আমাদের টিম মেম্বার অতি শীঘ্রই আপনার সাথে যোগাযোগ করে অর্ডারটি কনফার্ম করার জন্য কল করবেন।</p>
                 <button onclick="finishOrder()" class="continue-btn">ঠিক আছে</button>
