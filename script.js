@@ -13,85 +13,109 @@ document.addEventListener('DOMContentLoaded', () => {
     setupForm();
 });
 
-// ১. প্রোডাক্ট লিস্ট রেন্ডার
+// প্রোডাক্ট রেন্ডার ফাংশন
 function renderProducts(items) {
     const container = document.getElementById('product-container');
     if (!container) return;
 
-    container.innerHTML = items.map(product => `
-        <div class="product-card">
-            <div>
-                <div class="image-box">
-                    <img src="${product.image}" alt="${product.name}">
+    container.innerHTML = items.map(product => {
+        const cartItem = cart.find(item => item.id === product.id);
+        const qty = cartItem ? cartItem.qty : 0;
+
+        return `
+            <div class="product-card">
+                <div>
+                    <div class="image-box" onclick="openQuickView(${product.id})">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="product-title" onclick="openQuickView(${product.id})">${product.name}</div>
+                    <div class="price-stock-row">
+                        <span class="product-price">৳${product.price}</span>
+                        <span class="stock-badge">In stock</span>
+                    </div>
                 </div>
-                <div class="product-title">${product.name}</div>
-                <div class="price-stock-row">
-                    <span class="product-price">৳${product.price}</span>
-                    <span class="stock-badge">In stock</span>
-                </div>
+
+                ${qty > 0 ? `
+                    <div class="qty-picker">
+                        <button class="qty-btn-picker" onclick="changeQty(${product.id}, -1)">−</button>
+                        <span class="qty-val">${qty}</span>
+                        <button class="qty-btn-picker" onclick="changeQty(${product.id}, 1)">+</button>
+                    </div>
+                ` : `
+                    <button class="add-btn-initial" onclick="changeQty(${product.id}, 1)">
+                        🛒 Add to cart
+                    </button>
+                `}
             </div>
-            <button class="add-cart-btn" onclick="addToCart(${product.id})">
-                🛒 Add to cart
-            </button>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
-// ২. কার্টে অ্যাড করা
-function addToCart(productId) {
+// কোয়ান্টিটি পরিবর্তন
+function changeQty(productId, delta) {
     const product = products.find(p => p.id === productId);
     const existingIndex = cart.findIndex(item => item.id === productId);
 
     if (existingIndex > -1) {
-        cart[existingIndex].qty += 1;
-    } else {
+        cart[existingIndex].qty += delta;
+        if (cart[existingIndex].qty <= 0) {
+            cart.splice(existingIndex, 1);
+        }
+    } else if (delta > 0) {
         cart.push({ ...product, qty: 1 });
     }
 
-    updateCartUI();
-    toggleMiniCart(true); // কার্টে অ্যাড করলে পপ-আপ অটো ওপেন হবে
+    renderProducts(products);
+    updateCartTotals();
+
+    if (document.getElementById('checkout-view').style.display === 'block') {
+        renderCheckout();
+    }
 }
 
-// ৩. কার্ট UI আপডেট
-function updateCartUI() {
+// কার্ট টোটাল আপডেট
+function updateCartTotals() {
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
     document.getElementById('cartCount').innerText = totalQty;
-    document.getElementById('miniCartSubtotal').innerText = `৳${subtotal}`;
-
-    const miniContainer = document.getElementById('miniCartItems');
-    if (cart.length === 0) {
-        miniContainer.innerHTML = `<p class="empty-msg">আপনার কার্ট খালি আছে</p>`;
+    
+    const bottomBar = document.getElementById('fixedCartBar');
+    if (totalQty > 0) {
+        bottomBar.style.display = 'flex';
+        document.getElementById('bottomCartCount').innerText = totalQty;
+        document.getElementById('bottomCartTotal').innerText = `৳${subtotal} →`;
     } else {
-        miniContainer.innerHTML = cart.map(item => `
-            <div class="cart-item-row">
-                <div class="cart-item-info">
-                    <strong>${item.name}</strong>
-                    <div class="cart-item-qty">${item.qty}x - ৳${item.price}</div>
-                </div>
-                <div><strong>৳${item.price * item.qty}</strong></div>
-            </div>
-        `).join('');
+        bottomBar.style.display = 'none';
     }
 }
 
-function toggleMiniCart(forceOpen = false) {
-    const miniCart = document.getElementById('miniCart');
-    if (forceOpen) {
-        miniCart.classList.add('active');
-    } else {
-        miniCart.classList.toggle('active');
-    }
+// কুইক ভিউ ওপেন
+function openQuickView(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    document.getElementById('qvImage').src = product.image;
+    document.getElementById('qvTitle').innerText = product.name;
+    document.getElementById('qvPrice').innerText = `৳${product.price}`;
+    document.getElementById('qvAddBtn').onclick = function() {
+        goToCheckout();
+        closeQuickView();
+    };
+
+    document.getElementById('quickViewModal').style.display = 'flex';
 }
 
-// ৪. ভিউ কার্ট ও চেকআউট পেজে যাওয়া
+function closeQuickView() {
+    document.getElementById('quickViewModal').style.display = 'none';
+}
+
+// চেকআউট পেজে যাওয়া
 function goToCheckout() {
     if (cart.length === 0) {
-        alert('আপনার কার্ট খালি! অনুগ্রহ করে আগে প্রোডাক্ট যোগ করুন।');
+        alert('আপনার কার্ট খালি! প্রোডাক্ট যোগ করুন।');
         return;
     }
-    document.getElementById('miniCart').classList.remove('active');
     showSection('checkout-view');
     renderCheckout();
 }
@@ -99,9 +123,9 @@ function goToCheckout() {
 function showSection(sectionId) {
     document.getElementById('shop-view').style.display = (sectionId === 'shop-view') ? 'block' : 'none';
     document.getElementById('checkout-view').style.display = (sectionId === 'checkout-view') ? 'block' : 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ৫. চেকআউট সামারি তৈরি
 function renderCheckout() {
     const checkoutContainer = document.getElementById('checkoutOrderItems');
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -115,7 +139,7 @@ function renderCheckout() {
             <img src="${item.image}" alt="${item.name}">
             <div class="item-details">
                 <div class="item-title">${item.name}</div>
-                <div class="item-qty">${item.qty}x</div>
+                <div class="item-qty">Qty: ${item.qty}</div>
             </div>
             <div><strong>৳${item.price * item.qty}</strong></div>
         </div>
@@ -124,7 +148,7 @@ function renderCheckout() {
     updateDeliveryCharge();
 }
 
-// ৬. ডেলিভারি চার্জ হিসাব
+// ডেলিভারি চার্জ আপডেট
 function updateDeliveryCharge() {
     const locationZone = document.getElementById('custDistrict').value;
     let delivery = 70;
@@ -139,7 +163,7 @@ function updateDeliveryCharge() {
     document.getElementById('summaryTotal').innerText = `৳${subtotal + delivery}`;
 }
 
-// ৭. ফর্ম সাবমিট (গুগল শিটে তথ্য পাঠানো)
+// ফর্ম সাবমিট হ্যান্ডলার (গুগল শিট ও ইমেইল নোটিফিকেশন)
 function setupForm() {
     const checkoutForm = document.getElementById('checkoutForm');
     if (!checkoutForm) return;
@@ -179,15 +203,14 @@ function setupForm() {
 function showOrderSuccess() {
     document.getElementById('placeOrderBtn').disabled = false;
     document.getElementById('placeOrderBtn').textContent = 'Place Order';
-    document.getElementById('orderSuccessModal').style.display = 'flex';
-}
+    
+    document.getElementById('topSuccessNotice').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
-function finishOrder() {
     cart = [];
-    updateCartUI();
+    renderProducts(products);
+    updateCartTotals();
     document.getElementById('checkoutForm').reset();
-    document.getElementById('orderSuccessModal').style.display = 'none';
-    showSection('shop-view');
 }
 
 function searchProducts() {
