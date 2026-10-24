@@ -1,5 +1,5 @@
- // ⚠️ আপনার গুগল অ্যাপস স্ক্রিপ্ট (Web App URL) নিচে 'YOUR_GOOGLE_APPS_SCRIPT_URL' এর জায়গায় বসান:
-const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+ 
+const scriptURL = 'https://script.google.com/macros/s/AKfycbxYNeAUNdXYcUaAeNupvRyoiARb1PGC8au94ZYQzBysMkIop2txBsloRx9C62BDARIF/exec';
 
 // আপনার প্রোডাক্ট ডেটা
 const products = [
