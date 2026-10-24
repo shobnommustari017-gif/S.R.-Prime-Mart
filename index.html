@@ -11,51 +11,32 @@
     <!-- হেডার সেকশন -->
     <header class="main-header">
         <div class="header-container">
-            <div class="logo-area" onclick="showSection('shop-view')">
-                <img src="logo.jpg" alt="SR Prime Mart" class="logo-img" onerror="this.style.display='none'">
-                <span class="brand-name">SR Prime Mart</span>
+            <!-- লোগো ও কন্টাক্ট -->
+            <div class="top-row">
+                <div class="logo-area" onclick="showSection('shop-view')">
+                    <img src="logo.jpg" alt="SR Prime Mart" class="logo-img" onerror="this.style.display='none'">
+                    <span class="brand-name">SR Prime Mart</span>
+                </div>
+                <div class="header-right">
+                    <div class="contact-info">
+                        <small>LET'S TALK</small>
+                        <span>01600445389</span>
+                    </div>
+                    <div class="cart-icon-btn" onclick="goToCheckout()">
+                        🛒 <span id="cartCount" class="cart-badge">0</span>
+                    </div>
+                </div>
             </div>
 
+            <!-- ফুল উইডথ সার্চ বার -->
             <div class="search-area">
                 <input type="text" id="searchInput" placeholder="Search products..." onkeyup="searchProducts()">
                 <button class="search-btn" onclick="searchProducts()">Search</button>
             </div>
-
-            <div class="header-right">
-                <div class="contact-info">
-                    <small>LET'S TALK</small>
-                    <span>01600445389</span>
-                </div>
-                
-                <!-- কার্ট আইকন ও কাউন্টার -->
-                <div class="cart-wrapper">
-                    <div class="cart-icon-btn" onclick="toggleMiniCart()">
-                        🛒 <span id="cartCount" class="cart-badge">0</span>
-                    </div>
-
-                    <!-- মিনি কার্ট পপ-আপ -->
-                    <div id="miniCart" class="mini-cart">
-                        <div class="mini-cart-header">
-                            <h4>Shopping Cart</h4>
-                            <span class="close-mini" onclick="toggleMiniCart()">&times;</span>
-                        </div>
-                        <div id="miniCartItems" class="mini-cart-items">
-                            <p class="empty-msg">আপনার কার্ট খালি আছে</p>
-                        </div>
-                        <div class="mini-cart-footer">
-                            <div class="total-row">
-                                <span>Subtotal:</span>
-                                <span id="miniCartSubtotal">৳0</span>
-                            </div>
-                            <button class="view-cart-btn" onclick="goToCheckout()">View Cart & Checkout</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </header>
 
-    <!-- নেভিগেশন বার -->
+    <!-- নেভিগেশন বার (শুধু Home এবং All Products) -->
     <nav class="nav-bar">
         <div class="nav-container">
             <a href="javascript:void(0)" class="nav-link active" onclick="showSection('shop-view')">Home</a>
@@ -73,6 +54,11 @@
 
     <!-- ২. চেকআউট পেজ (Checkout View) -->
     <main id="checkout-view" class="main-container" style="display: none;">
+        
+        <div id="topSuccessNotice" class="top-success-notice" style="display: none;">
+            ✅ আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে! আমাদের টিম আপনাকে কল দিয়ে অর্ডারটি কনফার্ম করবে। আপনাকে ধন্যবাদ।
+        </div>
+
         <div class="checkout-header-bar">
             <button class="back-btn" onclick="showSection('shop-view')">← Continue shopping</button>
             <h2>Checkout</h2>
@@ -161,16 +147,29 @@
                 </div>
             </div>
         </form>
+    </main>
 
-        <!-- সাকসেস মেসেজ পপ-আপ -->
-        <div id="orderSuccessModal" class="modal">
-            <div class="modal-content success-card">
-                <h3>ধন্যবাদ! আপনার অর্ডারটি সফলভাবে গ্রহণ করা হয়েছে।</h3>
-                <p>আমাদের টিম মেম্বার অতি শীঘ্রই আপনার সাথে যোগাযোগ করে অর্ডারটি কনফার্ম করার জন্য কল করবেন।</p>
-                <button onclick="finishOrder()" class="continue-btn">ঠিক আছে</button>
+    <!-- ৩. প্রোডাক্ট কুইক ভিউ মডাল -->
+    <div id="quickViewModal" class="modal">
+        <div class="modal-content quick-view-card">
+            <span class="close-btn" onclick="closeQuickView()">&times;</span>
+            <div class="quick-view-body">
+                <img id="qvImage" src="" alt="Product">
+                <div class="qv-details">
+                    <h3 id="qvTitle"></h3>
+                    <div class="qv-price" id="qvPrice"></div>
+                    <p class="qv-stock">🟢 In stock</p>
+                    <button class="add-cart-btn" id="qvAddBtn">View Cart & Checkout</button>
+                </div>
             </div>
         </div>
-    </main>
+    </div>
+
+    <!-- ফিক্সড বটম কার্ট বার (মোবাইলের জন্য) -->
+    <div id="fixedCartBar" class="fixed-cart-bar" onclick="goToCheckout()" style="display: none;">
+        <span>🛒 View Cart (<span id="bottomCartCount">0</span>)</span>
+        <span id="bottomCartTotal">৳0 →</span>
+    </div>
 
     <script src="script.js"></script>
 </body>
