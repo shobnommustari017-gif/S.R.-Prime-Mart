@@ -1,103 +1,32 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SR Prime Mart</title>
+    <!-- আপনার সিএসএস ফাইল লিংক -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="top-bar">
-        <span>Welcome to SR Prime Mart</span>
-    </div>
-
-    <header class="main-header">
-        <div class="logo">SR Prime Mart</div>
-
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="Search for products...">
-            <button id="search-btn">Search</button>
-        </div>
-
-        <button id="cart-icon-btn" class="cart-icon-btn">
-            🛒 Cart (<span id="cart-count">0</span>)
-        </button>
+    <!-- হেডার বা টাইটেল সেকশন -->
+    <header style="text-align: center; padding: 15px; background: #fff; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+        <h2>SR Prime Mart</h2>
     </header>
 
-    <nav class="navbar">
-        <a href="#" class="active">BROWSE CATEGORIES</a>
-        <a href="#products">PRODUCTS</a>
-        <a href="#products">BRAND</a>
-        <a href="#products">COMBO</a>
-    </nav>
+    <!-- প্রোডাক্টগুলো এই নিচের একটি মাত্র লাইনে জাভাস্ক্রিপ্ট দিয়ে অটোমেটিক চলে আসবে -->
+    <div id="product-container" class="product-container"></div>
 
-    <main class="products-section" id="products">
-        <h1>Our Products</h1>
-        <div id="product-container" class="product-container"></div>
-    </main>
-
-    <div id="cart-overlay" class="cart-overlay"></div>
-
-    <aside id="cart-modal" class="cart-modal">
-        <div class="cart-header">
-            <h2>Your Shopping Cart</h2>
-            <button id="close-cart" class="close-btn"
-                    aria-label="Close cart">&times;</button>
-        </div>
-
-        <div id="cart-items" class="cart-items"></div>
-
-        <div class="delivery-section">
-            <h3>Delivery Area</h3>
-            <select id="delivery-area">
-                <option value="inside">Inside Dhaka - 70 BDT</option>
-                <option value="subarea">Sub-area - 110 BDT</option>
-                <option value="outside">Outside Dhaka - 130 BDT</option>
-            </select>
-        </div>
-
-        <div class="cart-total">
-            <p>
-                <strong>Product Total:</strong>
-                <span id="product-subtotal">0 BDT</span>
-            </p>
-            <p>
-                <strong>Delivery Charge:</strong>
-                <span id="delivery-charge">70 BDT</span>
-            </p>
-            <hr>
-            <p class="grand-total">
-                <strong>Grand Total:</strong>
-                <span id="cart-total-price">70 BDT</span>
-            </p>
-        </div>
-
-        <div class="checkout-form">
-            <h3>Customer Information</h3>
-
-            <input type="text" id="cust-name"
-                   placeholder="Your Full Name" autocomplete="name"
-                   maxlength="100">
-
-            <input type="tel" id="cust-phone"
-                   placeholder="Phone Number" autocomplete="tel"
-                   maxlength="25">
-
-            <textarea id="cust-address"
-                      placeholder="Full Delivery Address"
-                      rows="3" maxlength="500"></textarea>
-
-            <button id="checkout-btn" class="checkout-btn"
-                    type="button">Place Order</button>
-
-            <div id="order-notice" class="order-notice"
-                 role="status" aria-live="polite" hidden></div>
-        </div>
-    </aside>
-
+    <!-- আপনার জাভাস্ক্রিপ্ট ফাইল লিংক (একদম নিচে রাখবেন) -->
     <script src="script.js"></script>
 </body>
 </html>
+
+       
+        
+                
+                
+
+           
+
 
