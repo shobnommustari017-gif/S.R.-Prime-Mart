@@ -22,13 +22,14 @@
                         <span>01600445389</span>
                     </div>
                     
-                    <!-- কার্ট আইকন -->
-                    <div class="cart-icon-btn" onclick="openCartModal()">
+                    <!-- উপরের কার্ট বাটন -->
+                    <div class="cart-icon-btn" onclick="goToCheckout()">
                         🛒 <span id="cartCount" class="cart-badge">0</span>
                     </div>
                 </div>
             </div>
 
+            <!-- সার্চ বার -->
             <div class="search-area">
                 <input type="text" id="searchInput" placeholder="Search products..." onkeyup="searchProducts()">
                 <button class="search-btn" onclick="searchProducts()">Search</button>
@@ -44,7 +45,7 @@
         </div>
     </nav>
 
-    <!-- ১. প্রোডাক্ট গ্রিড পেজ -->
+    <!-- ১. প্রডাক্ট লিস্ট পেজ -->
     <main id="shop-view" class="main-container">
         <section class="products-section">
             <h2 class="section-title">All Products</h2>
@@ -52,29 +53,7 @@
         </section>
     </main>
 
-    <!-- ২. কার্ট পপ-আপ মডাল (Cart Modal With Plus-Minus) -->
-    <div id="cartModal" class="modal">
-        <div class="modal-content cart-modal-card">
-            <div class="modal-header">
-                <h3>Shopping Cart</h3>
-                <span class="close-btn" onclick="closeCartModal()">&times;</span>
-            </div>
-            
-            <div id="cartItemsContainer" class="cart-items-body">
-                <p class="empty-msg">আপনার কার্ট খালি আছে</p>
-            </div>
-
-            <div class="cart-modal-footer">
-                <div class="summary-row">
-                    <span>Subtotal:</span>
-                    <span id="modalSubtotal">৳0</span>
-                </div>
-                <button class="checkout-btn" onclick="goToCheckout()">Proceed to Checkout →</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ৩. চেকআউট পেজ (নাম, ঠিকানা ও ফোন নাম্বার) -->
+    <!-- ২. চেকআউট পেজ (নাম, ঠিকানা, ফোন নম্বর) -->
     <main id="checkout-view" class="main-container" style="display: none;">
         
         <div id="topSuccessNotice" class="top-success-notice" style="display: none;">
@@ -88,7 +67,7 @@
 
         <form id="checkoutForm">
             <div class="checkout-grid">
-                <!-- বাম পাশ: কাস্টমার ডিটেইলস -->
+                <!-- বাম কলাম -->
                 <div class="checkout-left">
                     <div class="card-box">
                         <h3>Delivery Details</h3>
@@ -131,7 +110,7 @@
                     </div>
                 </div>
 
-                <!-- ডান পাশ: অর্ডার সামারি -->
+                <!-- ডান কলাম -->
                 <div class="checkout-right">
                     <div class="card-box">
                         <h3>Your Order (<span id="checkoutItemCount">0</span>)</h3>
@@ -171,7 +150,7 @@
         </form>
     </main>
 
-    <!-- ৪. কুইক ইমেজ ভিউ মডাল -->
+    <!-- ৩. বড় ছবি ও প্রোডাক্ট ডিটেইলস পপ-আপ -->
     <div id="quickViewModal" class="modal">
         <div class="modal-content quick-view-card">
             <span class="close-btn" onclick="closeQuickView()">&times;</span>
@@ -180,11 +159,18 @@
                 <div class="qv-details">
                     <h3 id="qvTitle"></h3>
                     <div class="qv-price" id="qvPrice"></div>
+                    <p class="qv-phone">📞 Order Call: <strong>01600445389</strong></p>
                     <p class="qv-stock">🟢 In stock</p>
-                    <button class="add-cart-btn" id="qvAddBtn">Add to Cart</button>
+                    <button class="add-cart-btn" id="qvAddBtn">View Cart & Checkout</button>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- ফিক্সড বটম বার (মোবাইলের জন্য) -->
+    <div id="fixedCartBar" class="fixed-cart-bar" onclick="goToCheckout()" style="display: none;">
+        <span>🛒 View Cart (<span id="bottomCartCount">0</span>)</span>
+        <span id="bottomCartTotal">৳0 →</span>
     </div>
 
     <script src="script.js"></script>
