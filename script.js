@@ -13,84 +13,99 @@ document.addEventListener('DOMContentLoaded', () => {
     setupForm();
 });
 
-// প্রোডাক্ট রেন্ডার ফাংশন
+// প্রোডাক্ট রেন্ডার
 function renderProducts(items) {
     const container = document.getElementById('product-container');
     if (!container) return;
 
-    container.innerHTML = items.map(product => {
-        const cartItem = cart.find(item => item.id === product.id);
-        const qty = cartItem ? cartItem.qty : 0;
-
-        return `
-            <div class="product-card">
-                <div>
-                    <div class="image-box" onclick="openQuickView(${product.id})">
-                        <img src="${product.image}" alt="${product.name}">
-                    </div>
-                    <div class="product-title" onclick="openQuickView(${product.id})">${product.name}</div>
-                    <div class="price-stock-row">
-                        <span class="product-price">৳${product.price}</span>
-                        <span class="stock-badge">In stock</span>
-                    </div>
+    container.innerHTML = items.map(product => `
+        <div class="product-card">
+            <div>
+                <div class="image-box" onclick="openQuickView(${product.id})">
+                    <img src="${product.image}" alt="${product.name}">
                 </div>
-
-                ${qty > 0 ? `
-                    <div class="qty-picker">
-                        <button class="qty-btn-picker" onclick="changeQty(${product.id}, -1)">−</button>
-                        <span class="qty-val">${qty}</span>
-                        <button class="qty-btn-picker" onclick="changeQty(${product.id}, 1)">+</button>
-                    </div>
-                ` : `
-                    <button class="add-btn-initial" onclick="changeQty(${product.id}, 1)">
-                        🛒 Add to cart
-                    </button>
-                `}
+                <div class="product-title" onclick="openQuickView(${product.id})">${product.name}</div>
+                <div class="price-stock-row">
+                    <span class="product-price">৳${product.price}</span>
+                    <span class="stock-badge">In stock</span>
+                </div>
             </div>
-        `;
-    }).join('');
+            <button class="add-cart-btn" onclick="addToCart(${product.id})">
+                🛒 Add to cart
+            </button>
+        </div>
+    `).join('');
 }
 
-// কোয়ান্টিটি পরিবর্তন
-function changeQty(productId, delta) {
+// কার্টে অ্যাড করা
+function addToCart(productId) {
     const product = products.find(p => p.id === productId);
     const existingIndex = cart.findIndex(item => item.id === productId);
 
     if (existingIndex > -1) {
-        cart[existingIndex].qty += delta;
-        if (cart[existingIndex].qty <= 0) {
-            cart.splice(existingIndex, 1);
-        }
-    } else if (delta > 0) {
+        cart[existingIndex].qty += 1;
+    } else {
         cart.push({ ...product, qty: 1 });
     }
 
-    renderProducts(products);
-    updateCartTotals();
+    updateCartUI();
+    toggleMiniCart(true);
+}
 
+// কোয়ান্টিটি পরিবর্তন (+ / -)
+function changeQty(productId, delta) {
+    const itemIndex = cart.findIndex(item => item.id === productId);
+    if (itemIndex > -1) {
+        cart[itemIndex].qty += delta;
+        if (cart[itemIndex].qty <= 0) {
+            cart.splice(itemIndex, 1);
+        }
+    }
+    updateCartUI();
     if (document.getElementById('checkout-view').style.display === 'block') {
         renderCheckout();
     }
 }
 
-// কার্ট টোটাল আপডেট
-function updateCartTotals() {
+// কার্ট UI আপডেট
+function updateCartUI() {
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
     document.getElementById('cartCount').innerText = totalQty;
-    
-    const bottomBar = document.getElementById('fixedCartBar');
-    if (totalQty > 0) {
-        bottomBar.style.display = 'flex';
-        document.getElementById('bottomCartCount').innerText = totalQty;
-        document.getElementById('bottomCartTotal').innerText = `৳${subtotal} →`;
+    document.getElementById('miniCartSubtotal').innerText = `৳${subtotal}`;
+
+    const miniContainer = document.getElementById('miniCartItems');
+    if (cart.length === 0) {
+        miniContainer.innerHTML = `<p class="empty-msg">আপনার কার্ট খালি আছে</p>`;
     } else {
-        bottomBar.style.display = 'none';
+        miniContainer.innerHTML = cart.map(item => `
+            <div class="cart-item-row">
+                <div class="cart-item-info">
+                    <strong>${item.name}</strong>
+                    <div>৳${item.price}</div>
+                </div>
+                <div class="qty-controls">
+                    <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+                    <span>${item.qty}</span>
+                    <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                </div>
+                <div><strong>৳${item.price * item.qty}</strong></div>
+            </div>
+        `).join('');
     }
 }
 
-// কুইক ভিউ ওপেন
+function toggleMiniCart(forceOpen = false) {
+    const miniCart = document.getElementById('miniCart');
+    if (forceOpen) {
+        miniCart.classList.add('active');
+    } else {
+        miniCart.classList.toggle('active');
+    }
+}
+
+// কুইক ভিউ
 function openQuickView(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
@@ -99,7 +114,7 @@ function openQuickView(productId) {
     document.getElementById('qvTitle').innerText = product.name;
     document.getElementById('qvPrice').innerText = `৳${product.price}`;
     document.getElementById('qvAddBtn').onclick = function() {
-        goToCheckout();
+        addToCart(product.id);
         closeQuickView();
     };
 
@@ -113,9 +128,10 @@ function closeQuickView() {
 // চেকআউট পেজে যাওয়া
 function goToCheckout() {
     if (cart.length === 0) {
-        alert('আপনার কার্ট খালি! প্রোডাক্ট যোগ করুন।');
+        alert('আপনার কার্ট খালি! অনুগ্রহ করে আগে প্রোডাক্ট যোগ করুন।');
         return;
     }
+    document.getElementById('miniCart').classList.remove('active');
     showSection('checkout-view');
     renderCheckout();
 }
@@ -148,7 +164,6 @@ function renderCheckout() {
     updateDeliveryCharge();
 }
 
-// ডেলিভারি চার্জ আপডেট
 function updateDeliveryCharge() {
     const locationZone = document.getElementById('custDistrict').value;
     let delivery = 70;
@@ -163,7 +178,7 @@ function updateDeliveryCharge() {
     document.getElementById('summaryTotal').innerText = `৳${subtotal + delivery}`;
 }
 
-// ফর্ম সাবমিট হ্যান্ডলার (গুগল শিট ও ইমেইল নোটিফিকেশন)
+// অর্ডার সাবমিট
 function setupForm() {
     const checkoutForm = document.getElementById('checkoutForm');
     if (!checkoutForm) return;
@@ -208,8 +223,7 @@ function showOrderSuccess() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     cart = [];
-    renderProducts(products);
-    updateCartTotals();
+    updateCartUI();
     document.getElementById('checkoutForm').reset();
 }
 
