@@ -1,43 +1,21 @@
-// আপনার Google Apps Script URL
 const scriptURL = 'https://script.google.com/macros/s/AKfycbxYNeAUNdXYcUaAeNupvRyoiARb1PGC8au94ZYQzBysMkIop2txBsloRx9C62BDARIF/exec';
 
-// প্রোডাক্টের তথ্য
 const products = [
-    {
-        id: 1,
-        name: "Men's Bar Neckpiece",
-        price: 180,
-        image: "b2.jpg"
-    },
-    {
-        id: 2,
-        name: "Men's Bar Bracelet",
-        price: 200,
-        image: "b1.jpg"
-    },
-    {
-        id: 3,
-        name: "Luxury Islamic Ayatul Kursi Cuff Bracelet",
-        price: 200,
-        image: "b3.jpg"
-    }
+    { id: 1, name: "Men's Bar Neckpiece", price: 180, image: "b2.jpg" },
+    { id: 2, name: "Men's Bar Bracelet", price: 200, image: "b1.jpg" },
+    { id: 3, name: "Luxury Islamic Ayatul Kursi Cuff Bracelet", price: 200, image: "b3.jpg" }
 ];
 
-let cartItemCount = 0;
+let cart = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     renderProducts(products);
 });
 
-// প্রোডাক্ট রেন্ডার করা
+// প্রডাক্ট গ্রিড রেন্ডার
 function renderProducts(items) {
     const container = document.getElementById('product-container');
     if (!container) return;
-
-    if (items.length === 0) {
-        container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888;">কোনো প্রোডাক্ট পাওয়া যায়নি!</p>`;
-        return;
-    }
 
     container.innerHTML = items.map(product => `
         <div class="product-card">
@@ -51,86 +29,163 @@ function renderProducts(items) {
                     <span class="stock-badge">In stock</span>
                 </div>
             </div>
-            <button class="add-cart-btn" onclick="addToCart('${product.name.replace(/'/g, "\\'")}', ${product.price})">
+            <button class="add-cart-btn" onclick="addToCart(${product.id})">
                 <i class="fa-solid fa-cart-plus"></i> Add to cart
             </button>
         </div>
     `).join('');
 }
 
-// সার্চ ফাংশন
+// কার্টে অ্যাড করা
+function addToCart(productId) {
+    const product = products.find(p => p.id === productId);
+    const existingIndex = cart.findIndex(item => item.id === productId);
+
+    if (existingIndex > -1) {
+        cart[existingIndex].qty += 1;
+    } else {
+        cart.push({ ...product, qty: 1 });
+    }
+
+    updateCartUI();
+}
+
+// কার্ট UI ও কাউন্ট আপডেট
+function updateCartUI() {
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+    document.getElementById('cartCount').innerText = totalQty;
+    document.getElementById('miniCartSubtotal').innerText = `৳${subtotal}`;
+
+    const miniContainer = document.getElementById('miniCartItems');
+    if (cart.length === 0) {
+        miniContainer.innerHTML = `<p class="empty-msg">আপনার কার্ট খালি আছে</p>`;
+    } else {
+        miniContainer.innerHTML = cart.map(item => `
+            <div class="cart-item-row">
+                <div class="cart-item-info">
+                    <strong>${item.name}</strong>
+                    <div class="cart-item-qty">${item.qty}x - ৳${item.price}</div>
+                </div>
+                <div><strong>৳${item.price * item.qty}</strong></div>
+            </div>
+        `).join('');
+    }
+}
+
+function toggleMiniCart() {
+    document.getElementById('miniCart').classList.toggle('active');
+}
+
+// চেকআউট পেজে যাওয়া
+function goToCheckout() {
+    if (cart.length === 0) {
+        alert('আপনার কার্ট খালি!');
+        return;
+    }
+    document.getElementById('miniCart').classList.remove('active');
+    showSection('checkout-view');
+    renderCheckout();
+}
+
+function showSection(sectionId) {
+    document.getElementById('shop-view').style.display = (sectionId === 'shop-view') ? 'block' : 'none';
+    document.getElementById('checkout-view').style.display = (sectionId === 'checkout-view') ? 'block' : 'none';
+}
+
+// চেকআউট সামারি রেন্ডার
+function renderCheckout() {
+    const checkoutContainer = document.getElementById('checkoutOrderItems');
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+    document.getElementById('checkoutItemCount').innerText = totalQty;
+    document.getElementById('summarySubtotal').innerText = `৳${subtotal}`;
+
+    checkoutContainer.innerHTML = cart.map(item => `
+        <div class="checkout-item">
+            <img src="${item.image}" alt="${item.name}">
+            <div class="item-details">
+                <div class="item-title">${item.name}</div>
+                <div class="item-qty">${item.qty}x</div>
+            </div>
+            <div><strong>৳${item.price * item.qty}</strong></div>
+        </div>
+    `).join('');
+
+    updateDeliveryCharge();
+}
+
+// নতুন ডেলিভারি চার্জ হিসাবের ফাংশন
+function updateDeliveryCharge() {
+    const locationZone = document.getElementById('custDistrict').value;
+    let delivery = 70;
+
+    if (locationZone === 'Inside Dhaka') {
+        delivery = 70;
+    } else if (locationZone === 'Dhaka Sub-Area') {
+        delivery = 110;
+    } else if (locationZone === 'Outside Dhaka') {
+        delivery = 130;
+    }
+
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+    document.getElementById('summaryDelivery').innerText = `৳${delivery}`;
+    document.getElementById('summaryTotal').innerText = `৳${subtotal + delivery}`;
+}
+
+// অর্ডার সাবমিট (গুগল শিটে ডাটা পাঠানো)
+function handleOrderSubmit(e) {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById('placeOrderBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'প্রসেসিং হচ্ছে...';
+
+    const orderDetailsList = cart.map(item => `${item.name} (${item.qty}x)`).join(', ');
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const locationZone = document.getElementById('custDistrict').value;
+    
+    let delivery = 70;
+    if (locationZone === 'Inside Dhaka') delivery = 70;
+    else if (locationZone === 'Dhaka Sub-Area') delivery = 110;
+    else if (locationZone === 'Outside Dhaka') delivery = 130;
+
+    const total = subtotal + delivery;
+
+    const formData = new FormData();
+    formData.append('Product', orderDetailsList);
+    formData.append('Name', document.getElementById('custName').value);
+    formData.append('Phone', document.getElementById('custPhone').value);
+    formData.append('Address', `${document.getElementById('custAddress').value}, ${document.getElementById('custThana').value} (${locationZone})`);
+    formData.append('Notes', document.getElementById('custNotes').value);
+    formData.append('Total', `৳${total}`);
+
+    fetch(scriptURL, { method: 'POST', body: formData })
+        .then(() => showOrderSuccess())
+        .catch(() => showOrderSuccess());
+}
+
+function showOrderSuccess() {
+    document.getElementById('placeOrderBtn').disabled = false;
+    document.getElementById('placeOrderBtn').textContent = 'Place Order';
+    document.getElementById('orderSuccessModal').style.display = 'flex';
+}
+
+function finishOrder() {
+    cart = [];
+    updateCartUI();
+    document.getElementById('checkoutForm').reset();
+    document.getElementById('orderSuccessModal').style.display = 'none';
+    showSection('shop-view');
+}
+
 function searchProducts() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const filtered = products.filter(p => p.name.toLowerCase().includes(query));
     renderProducts(filtered);
-}
-
-// কার্টে এড করা ও পপ-আপ মডাল ওপেন করা
-function addToCart(productName, price) {
-    cartItemCount++;
-    const cartBadge = document.getElementById('cartCount');
-    if (cartBadge) {
-        cartBadge.innerText = cartItemCount;
-    }
-    
-    const productInput = document.getElementById('selectedProduct');
-    if (productInput) {
-        productInput.value = `${productName} - ৳${price}`;
-    }
-
-    openCart();
-}
-
-// পপ-আপ মডাল ওপেন ও ক্লোজ
-function openCart() {
-    const modal = document.getElementById('cartModal');
-    if (modal) {
-        modal.style.display = 'flex';
-    }
-}
-
-function closeCart() {
-    const modal = document.getElementById('cartModal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-    const msg = document.getElementById('successMessage');
-    if (msg) {
-        msg.style.display = 'none';
-    }
-}
-
-// ফর্ম সাবমিট করা
-const orderForm = document.getElementById('orderForm');
-if (orderForm) {
-    orderForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const submitBtn = document.getElementById('submitBtn');
-        const successMessage = document.getElementById('successMessage');
-
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'প্রসেসিং হচ্ছে...';
-
-        const formData = new FormData(orderForm);
-
-        fetch(scriptURL, { method: 'POST', body: formData })
-            .then(response => showSuccess())
-            .catch(error => showSuccess());
-
-        function showSuccess() {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'অর্ডার কনফার্ম করুন';
-            orderForm.reset();
-            if (successMessage) {
-                successMessage.style.display = 'block';
-            }
-            
-            setTimeout(() => {
-                closeCart();
-            }, 3000);
-        }
-    });
 }
           
     
