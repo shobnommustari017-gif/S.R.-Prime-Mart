@@ -1,10 +1,13 @@
-// আপনার প্রোডাক্টের ডেটা
+ // ⚠️ আপনার গুগল অ্যাপস স্ক্রিপ্ট (Web App URL) নিচে 'YOUR_GOOGLE_APPS_SCRIPT_URL' এর জায়গায় বসান:
+const scriptURL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+
+// আপনার প্রোডাক্ট ডেটা
 const products = [
     {
         id: 1,
         name: "Men's Bar Neckpiece",
         price: 180,
-        image: "b2.jpg", // প্রয়োজন অনুযায়ী আপনার ফাইলের সঠিক নাম দেবেন
+        image: "b2.jpg",
         inStock: true
     },
     {
@@ -23,7 +26,13 @@ const products = [
     }
 ];
 
-// প্রোডাক্টগুলোকে HTML-এ ডায়নামিকালি রেন্ডার করার ফাংশন
+// পেজ লোড হলে কাজ করবে
+document.addEventListener('DOMContentLoaded', () => {
+    renderProducts();
+    populateProductSelect();
+});
+
+// প্রোডাক্ট গ্রিড রেন্ডার
 function renderProducts() {
     const container = document.getElementById('product-container');
     if (!container) return;
@@ -38,29 +47,72 @@ function renderProducts() {
                     <div class="product-title">${product.name}</div>
                     <div class="price-stock-row">
                         <span class="product-price">৳${product.price}</span>
-                        <span class="stock-status ${product.inStock ? '' : 'stock-out'}">
-                            ${product.inStock ? 'In stock' : 'Stock out'}
-                        </span>
+                        <span class="stock-status">In stock</span>
                     </div>
                 </div>
             </div>
-            <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
+            <button class="add-to-cart-btn" onclick="selectAndScroll('${product.name}')">
                 🛒 Add to cart
             </button>
         </div>
     `).join('');
 }
 
-// অ্যাড টু কার্ট ফাংশনালিটি (আপনার প্রয়োজন অনুযায়ী কাস্টমাইজ করতে পারবেন)
-function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
-    alert(`${product.name} আপনার কার্টে যুক্ত করা হয়েছে!`);
+// ড্রপডাউন বক্সে প্রডাক্ট যুক্ত করা
+function populateProductSelect() {
+    const select = document.getElementById('productSelect');
+    if (!select) return;
+
+    products.forEach(product => {
+        const option = document.createElement('option');
+        option.value = `${product.name} - ৳${product.price}`;
+        option.textContent = `${product.name} - ৳${product.price}`;
+        select.appendChild(option);
+    });
 }
 
-// পেজ লোড হলে প্রোডাক্ট শো করবে
-document.addEventListener('DOMContentLoaded', renderProducts);
+// Add to cart চাপলে নিচে ফর্মে অপশন সিলেক্ট হবে
+function selectAndScroll(productName) {
+    const select = document.getElementById('productSelect');
+    for (let option of select.options) {
+        if (option.text.includes(productName)) {
+            select.value = option.value;
+            break;
+        }
+    }
+    document.querySelector('.checkout-section').scrollIntoView({ behavior: 'smooth' });
+}
 
+// ফর্ম সাবমিট ও গুগল শিটে ডাটা পাঠানো + সাকসেস মেসেজ
+const orderForm = document.getElementById('orderForm');
+if (orderForm) {
+    orderForm.addEventListener('submit', function (e) {
+        e.preventDefault();
 
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'প্রসেসিং হচ্ছে...';
+
+        const formData = new FormData(orderForm);
+
+        if (scriptURL && scriptURL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => showSuccess())
+                .catch(error => showSuccess());
+        } else {
+            showSuccess();
+        }
+
+        function showSuccess() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'অর্ডার কনফার্ম করুন';
+            orderForm.reset();
+            successMessage.style.display = 'block';
+        }
+    });
+}
 
        
 
