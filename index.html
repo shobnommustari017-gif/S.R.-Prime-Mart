@@ -22,14 +22,31 @@
                         <span>01600445389</span>
                     </div>
                     
-                    <!-- উপরের কার্ট বাটন -->
-                    <div class="cart-icon-btn" onclick="goToCheckout()">
+                    <!-- কার্ট আইকন ও পপ-আপ ট্রিগার -->
+                    <div class="cart-icon-btn" onclick="toggleMiniCart()">
                         🛒 <span id="cartCount" class="cart-badge">0</span>
+                    </div>
+
+                    <!-- মিনি কার্ট ড্রপডাউন -->
+                    <div id="miniCart" class="mini-cart">
+                        <div class="mini-cart-header">
+                            <h4>Shopping Cart</h4>
+                            <span class="close-mini" onclick="toggleMiniCart()">&times;</span>
+                        </div>
+                        <div id="miniCartItems" class="mini-cart-items">
+                            <p class="empty-msg">আপনার কার্ট খালি আছে</p>
+                        </div>
+                        <div class="mini-cart-footer">
+                            <div class="total-row">
+                                <span>Subtotal:</span>
+                                <span id="miniCartSubtotal">৳0</span>
+                            </div>
+                            <button class="view-cart-btn" onclick="goToCheckout()">View Cart & Checkout</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- সার্চ বার -->
             <div class="search-area">
                 <input type="text" id="searchInput" placeholder="Search products..." onkeyup="searchProducts()">
                 <button class="search-btn" onclick="searchProducts()">Search</button>
@@ -67,7 +84,6 @@
 
         <form id="checkoutForm">
             <div class="checkout-grid">
-                <!-- বাম কলাম -->
                 <div class="checkout-left">
                     <div class="card-box">
                         <h3>Delivery Details</h3>
@@ -110,7 +126,6 @@
                     </div>
                 </div>
 
-                <!-- ডান কলাম -->
                 <div class="checkout-right">
                     <div class="card-box">
                         <h3>Your Order (<span id="checkoutItemCount">0</span>)</h3>
@@ -161,16 +176,10 @@
                     <div class="qv-price" id="qvPrice"></div>
                     <p class="qv-phone">📞 Order Call: <strong>01600445389</strong></p>
                     <p class="qv-stock">🟢 In stock</p>
-                    <button class="add-cart-btn" id="qvAddBtn">View Cart & Checkout</button>
+                    <button class="add-cart-btn" id="qvAddBtn">Add to Cart</button>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- ফিক্সড বটম বার (মোবাইলের জন্য) -->
-    <div id="fixedCartBar" class="fixed-cart-bar" onclick="goToCheckout()" style="display: none;">
-        <span>🛒 View Cart (<span id="bottomCartCount">0</span>)</span>
-        <span id="bottomCartTotal">৳0 →</span>
     </div>
 
     <script src="script.js"></script>
