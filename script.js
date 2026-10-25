@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupForm();
 });
 
-// ১. প্রোডাক্ট রেন্ডার
+// প্রোডাক্ট রেন্ডার
 function renderProducts(items) {
     const container = document.getElementById('product-container');
     if (!container) return;
@@ -37,7 +37,7 @@ function renderProducts(items) {
     `).join('');
 }
 
-// ২. কার্টে অ্যাড করা
+// কার্টে যোগ করা
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
     const existingIndex = cart.findIndex(item => item.id === productId);
@@ -49,10 +49,10 @@ function addToCart(productId) {
     }
 
     updateCartUI();
-    toggleMiniCart(true); // কার্টে ক্লিক বা অ্যাড করলেই মিনি কার্ট ওপেন হবে
+    toggleMiniCart(true);
 }
 
-// ৩. প্লাস মাইনাস কন্ট্রোল
+// প্লাস মাইনাস কন্ট্রোল
 function changeQty(productId, delta) {
     const itemIndex = cart.findIndex(item => item.id === productId);
     if (itemIndex > -1) {
@@ -67,7 +67,7 @@ function changeQty(productId, delta) {
     }
 }
 
-// ৪. কার্ট UI আপডেট
+// কার্ট UI আপডেট
 function updateCartUI() {
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
@@ -105,7 +105,7 @@ function toggleMiniCart(forceOpen = false) {
     }
 }
 
-// ৫. চেকআউট পেজে যাওয়া
+// চেকআউট পেজে যাওয়া
 function goToCheckout() {
     if (cart.length === 0) {
         alert('আপনার কার্ট খালি! অনুগ্রহ করে আগে প্রোডাক্ট যোগ করুন।');
@@ -122,7 +122,7 @@ function showSection(sectionId) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ৬. চেকআউট সামারি
+// চেকআউট সামারি
 function renderCheckout() {
     const checkoutContainer = document.getElementById('checkoutOrderItems');
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -159,7 +159,7 @@ function updateDeliveryCharge() {
     document.getElementById('summaryTotal').innerText = `৳${subtotal + delivery}`;
 }
 
-// ৭. কুইক ইমেজ ভিউ (ছবিতে ক্লিক করলে বড় ছবি, নাম, দাম ও ফোন নম্বরসহ দেখাবে)
+// কুইক ইমেজ ভিউ
 function openQuickView(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
@@ -180,7 +180,7 @@ function closeQuickView() {
     document.getElementById('quickViewModal').style.display = 'none';
 }
 
-// ৮. গুগল শিট সাবমিট (no-cors সহ ১০০% সিওর)
+// গুগল শিট সাবমিট (no-cors সহ)
 function setupForm() {
     const checkoutForm = document.getElementById('checkoutForm');
     if (!checkoutForm) return;
@@ -234,3 +234,5 @@ function searchProducts() {
     const filtered = products.filter(p => p.name.toLowerCase().includes(query));
     renderProducts(filtered);
 }
+
+   
