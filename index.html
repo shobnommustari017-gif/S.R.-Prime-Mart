@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SR Prime Mart</title>
+    <title>S.R. Prime Mart</title>
+    <!-- Google Fonts থেকে Poppins ফন্ট যুক্ত করা হলো -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,8 +15,8 @@
         <div class="header-container">
             <div class="top-row">
                 <div class="logo-area" onclick="showSection('shop-view')">
-                    <img src="logo.jpg" alt="SR Prime Mart" class="logo-img" onerror="this.style.display='none'">
-                    <span class="brand-name">SR Prime Mart</span>
+                    <img src="logo.jpg" alt="S.R. Prime Mart" class="logo-img" onerror="this.style.display='none'">
+                    <span class="brand-name">S.R. Prime Mart</span>
                 </div>
                 <div class="header-right">
                     <div class="contact-info">
@@ -58,7 +60,7 @@
     <!-- নেভিগেশন বার -->
     <nav class="nav-bar">
         <div class="nav-container">
-            <a href="javascript:void(0)" class="nav-link active" onclick="showSection('showSection('shop-view')">Home</a>
+            <a href="javascript:void(0)" class="nav-link active" onclick="showSection('shop-view')">Home</a>
             <a href="javascript:void(0)" class="nav-link" onclick="showSection('shop-view')">All Products</a>
         </div>
     </nav>
@@ -80,7 +82,6 @@
 
         <div class="checkout-header-bar">
             <button class="back-btn" onclick="showSection('shop-view')">← Continue shopping</button>
-            <!-- এখানে থাকা Checkout শিরোনামটি তুলে দেওয়া হয়েছে -->
         </div>
 
         <form id="checkoutForm">
@@ -186,5 +187,4 @@
     <script src="script.js"></script>
 </body>
 </html>
-
-   
+            
