@@ -1,4 +1,4 @@
-const scriptURL = 'https://script.google.com/macros/s/AKfycbxoaSDr8nt34fCjr00fhrpsTqA-yiz-Nb6uEgxSFbgDjJZuImhOXEU2RNs9ZRWJOZIe/exec';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbyQvrBLb7j6tjzlpb2UdhdlWQOnCWLhepbeRZl7J0CRUxZl9i8A1chTSQPoUfhwGXTT/exec';
 
 const products = [
     { id: 1, name: "Men's Bar Neckpiece", price: 180, image: "b2.jpg" },
