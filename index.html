@@ -22,26 +22,27 @@
                         <span>01600445389</span>
                     </div>
                     
-                    <!-- কার্ট আইকন ও পপ-আপ ট্রিগার -->
-                    <div class="cart-icon-btn" onclick="toggleMiniCart()">
-                        🛒 <span id="cartCount" class="cart-badge">0</span>
-                    </div>
+                    <!-- কার্ট আইকন ও ড্রপডাউন -->
+                    <div class="cart-wrapper">
+                        <div class="cart-icon-btn" onclick="toggleMiniCart()">
+                            🛒 <span id="cartCount" class="cart-badge">0</span>
+                        </div>
 
-                    <!-- মিনি কার্ট ড্রপডাউন -->
-                    <div id="miniCart" class="mini-cart">
-                        <div class="mini-cart-header">
-                            <h4>Shopping Cart</h4>
-                            <span class="close-mini" onclick="toggleMiniCart()">&times;</span>
-                        </div>
-                        <div id="miniCartItems" class="mini-cart-items">
-                            <p class="empty-msg">আপনার কার্ট খালি আছে</p>
-                        </div>
-                        <div class="mini-cart-footer">
-                            <div class="total-row">
-                                <span>Subtotal:</span>
-                                <span id="miniCartSubtotal">৳0</span>
+                        <div id="miniCart" class="mini-cart">
+                            <div class="mini-cart-header">
+                                <h4>Shopping Cart</h4>
+                                <span class="close-mini" onclick="toggleMiniCart()">&times;</span>
                             </div>
-                            <button class="view-cart-btn" onclick="goToCheckout()">View Cart & Checkout</button>
+                            <div id="miniCartItems" class="mini-cart-items">
+                                <p class="empty-msg">আপনার কার্ট খালি আছে</p>
+                            </div>
+                            <div class="mini-cart-footer">
+                                <div class="total-row">
+                                    <span>Subtotal:</span>
+                                    <span id="miniCartSubtotal">৳0</span>
+                                </div>
+                                <button class="view-cart-btn" onclick="goToCheckout()">View Cart & Checkout</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -62,7 +63,7 @@
         </div>
     </nav>
 
-    <!-- ১. প্রডাক্ট লিস্ট পেজ -->
+    <!-- ১. প্রোডাক্ট গ্রিড পেজ -->
     <main id="shop-view" class="main-container">
         <section class="products-section">
             <h2 class="section-title">All Products</h2>
