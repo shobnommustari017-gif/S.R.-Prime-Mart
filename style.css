@@ -1,4 +1,4 @@
-- {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -81,6 +81,7 @@ body {
 .search-area { display: flex; width: 100%; }
 .search-area input {
     width: 100%; padding: 8px 12px; border: 1px solid #c8e6c9; border-radius: 6px 0 0 6px; outline: none; font-size: 13px;
+    font-family: 'Poppins', sans-serif;
 }
 .search-btn {
     padding: 8px 15px; background: #2e7d32; color: white; border: none; border-radius: 0 6px 6px 0; cursor: pointer; font-size: 13px; font-weight: 600;
